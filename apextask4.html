@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Personal Portfolio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header, footer {
+      background-color: #333;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    nav a {
+      margin: 0 1rem;
+      color: white;
+      text-decoration: none;
+    }
+    section {
+      padding: 2rem;
+    }
+    h2 {
+      border-bottom: 2px solid #eee;
+      padding-bottom: 0.5rem;
+    }
+    
+    @media (max-width: 600px) {
+      nav {
+        display: block;
+        text-align: center;
+      }
+    }
+
+    
+    #todo-list input[type="text"] {
+      padding: 0.5rem;
+      width: 60%;
+    }
+    #todo-list ul {
+      list-style: none;
+      padding: 0;
+    }
+    #todo-list li {
+      display: flex;
+      justify-content: space-between;
+      background: #f4f4f4;
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+    }
+
+    
+    .product {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+    .filters {
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>My Portfolio</h1>
+  <nav>
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section id="about">
+  <h2>About Me</h2>
+  <p>I am a web developer passionate about JavaScript, interactivity, and clean UI design. 
+    This portfolio demonstrates local storage, filtering, and responsive layout features.
+    I Created a Simple Webpage Using HTML,Styled the Webpage Using CSS,Added Basic JavaScript for Interactivity
+     I Created a Contact Form Using HTML and CSS,Added JavaScript Form ValidationCreate a Responsive Layout Using Flexbox and CSS Grid,Developed a Dynamic To-Do List or Image Gallery Using JavaScript
+</p>
+</section>
+
+<section id="projects">
+  <h2>Projects</h2>
+
+    <div id="todo-list">
+    <h3>To-Do List</h3>
+    <input type="text" id="taskInput" placeholder="Enter task...">
+    <button onclick="addTask()">Add</button>
+    <ul id="taskList"></ul>
+  </div>
+
+  
+  <div id="product-filter">
+    <h3>Product Filter & Sort</h3>
+    <div class="filters">
+      <label>Category:</label>
+      <select id="categoryFilter" onchange="filterAndSortProducts()">
+        <option value="">All</option>
+        <option value="Books">Books</option>
+        <option value="Electronics">Electronics</option>
+      </select>
+      <label>Sort by:</label>
+      <select id="sortBy" onchange="filterAndSortProducts()">
+        <option value="price">Price</option>
+        <option value="rating">Rating</option>
+      </select>
+    </div>
+    <div id="productList"></div>
+  </div>
+
+</section>
+
+<section id="contact">
+  <h2>Contact</h2>
+  <p>Email:vaishnavigudimella003@gmail.com</p>
+  <p>GitHub: github.com/vaishnavi</p>
+</section>
+
+<footer>
+  <p>&copy; 2025 Vaishnavi</p>
+</footer>
+
+<script>
+
+  let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+  function renderTasks() {
+    const taskList = document.getElementById('taskList');
+    taskList.innerHTML = '';
+    tasks.forEach((task, index) => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <span style="text-decoration:${task.done ? 'line-through' : 'none'}">${task.text}</span>
+        <div>
+          <button onclick="toggleTask(${index})">${task.done ? 'Undo' : 'Done'}</button>
+          <button onclick="deleteTask(${index})">Delete</button>
+        </div>
+      `;
+      taskList.appendChild(li);
+    });
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }
+
+  function addTask() {
+    const input = document.getElementById('taskInput');
+    if (input.value.trim()) {
+      tasks.push({ text: input.value.trim(), done: false });
+      input.value = '';
+      renderTasks();
+    }
+  }
+
+  function deleteTask(index) {
+    tasks.splice(index, 1);
+    renderTasks();
+  }
+
+  function toggleTask(index) {
+    tasks[index].done = !tasks[index].done;
+    renderTasks();
+  }
+
+  renderTasks();
+
+  
+  const products = [
+    { name: "Book A", category: "Books", price: 10, rating: 4.5 },
+    { name: "Headphones", category: "Electronics", price: 50, rating: 4.2 },
+    { name: "Book B", category: "Books", price: 15, rating: 4.8 },
+    { name: "Smartphone", category: "Electronics", price: 300, rating: 4.6 }
+  ];
+
+  function filterAndSortProducts() {
+    const category = document.getElementById('categoryFilter').value;
+    const sortBy = document.getElementById('sortBy').value;
+    let filtered = [...products];
+
+    if (category) {
+      filtered = filtered.filter(p => p.category === category);
+    }
+
+    filtered.sort((a, b) => a[sortBy] - b[sortBy]);
+
+    const productList = document.getElementById('productList');
+    productList.innerHTML = '';
+    filtered.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'product';
+      div.innerHTML = `
+        <h4>${p.name}</h4>
+        <p>Category: ${p.category}</p>
+        <p>Price: $${p.price}</p>
+        <p>Rating: ${p.rating}</p>
+      `;
+      productList.appendChild(div);
+    });
+  }
+
+  filterAndSortProducts();
+</script>
+
+</body>
+</html>
